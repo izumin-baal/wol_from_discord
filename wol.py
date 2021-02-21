@@ -1,5 +1,7 @@
 import discord
 import sys
+import time
+import pings
 from configparser import ConfigParser
 from datetime import datetime, timedelta
 
@@ -28,7 +30,7 @@ SERVER_ID = int(config.get('settings', 'SERVER_ID'))
 ALERT_CHANNEL = int(config.get('settings', 'ALERT_CHANNEL'))
 # ホスト一覧
 HOST = [
-    ["MainPC", "XX:XX:XX:XX:XX:AA", "XXX.XXX.XXX.1"],
+    ["MainPC", "XX:XX:XX:XX:XX:AA", "XXX.XXX.XX1"],
     ["Server1", "XX:XX:XX:XX:XX:BB", "XXX.XXX.XXX.2"],
     ["Server2", "XX:XX:XX:XX:XX:CC", "XXX.XXX.XXX.3"],
 ]
@@ -60,8 +62,26 @@ async def on_message(message):
             await message.channel.send("Timeout...")
             error_flag = 1
         else:
-            await message.channel.send("OK\nsend wol(" + HOST[int(select_result.content)-1][1] + ")\nThis device IP address is " + HOST[int(select_result.content)-1][2])
-
+            MACaddress = HOST[int(select_result.content)-1][1]
+            IPaddress = HOST[int(select_result.content)-1][2]
+            await message.channel.send("OK\nsend wol(" + MACaddress + ")\nThis device IP address is " + IPaddress)
+        if error_flag != 1:
+            ping_result = 0
+            for i in range(6):
+                time.sleep(5)
+                await message.channel.send("ping...")
+                ping = pings.Ping()
+                response = ping.ping(IPaddress)
+                if response.is_reached():
+                    ping_result = 1
+                    await message.channel.send("Success!")
+                    break
+                else:
+                    await message.channel.send("unreachable...")
+            if ping_result == 1:
+                await message.channel.send("Active")
+            else:
+                await message.channel.send("disabled")
 
     if message.content == '!dis':
         sys.exit()
