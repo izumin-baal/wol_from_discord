@@ -100,4 +100,45 @@ async def on_message(message):
             else:
                 await message.channel.send(f"{message.author.mention}\n:red_circle: disabled")
 
+    if message.content == '!ping':
+        msg = ""
+        error_flag = 0
+        for num,value in enumerate(HOST):
+            msg = msg + str(num + 1) + ": " + value[0] + "\n"
+        reply_select = msg + "\n" + "Which? :"
+        await message.channel.send(reply_select)
+        def select(m):
+            if m.content.isdecimal():
+                if int(m.content) <= len(HOST) and int(m.content) > 0:
+                    return m.channel == message.channel and m.author != client.user
+                else:
+                    return False
+            else:
+                return False
+        try:
+            select_result = await client.wait_for('message', check=select, timeout=10.0)
+        except:
+            await message.channel.send("Timeout...")
+            error_flag = 1
+        else:
+            MACaddress = HOST[int(select_result.content)-1][1]
+            IPaddress = HOST[int(select_result.content)-1][2]
+            await message.channel.send("ping: " + IPaddress)
+        if error_flag != 1:
+            ping_result = 0
+            ping = pings.Ping()
+            response = ping.ping(IPaddress)
+            if response.is_reached():
+                ping_result = 1
+                await message.channel.send("Success!")
+            else:
+                await message.channel.send("unreachable...")
+            if ping_result == 1:
+                await message.channel.send(f"{message.author.mention}\n:green_circle: Active")
+            else:
+                await message.channel.send(f"{message.author.mention}\n:red_circle: disabled")
+    
+    if message.content == '!dis':
+        sys.exit()
+
 client.run(BOT_TOKEN)
