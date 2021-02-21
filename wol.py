@@ -1,17 +1,25 @@
 import discord
+from configparser import ConfigParser
 from datetime import datetime, timedelta
 
-# 定義
+config = ConfigParser()
+config.read('config.ini', encoding='utf-8')
+""" config.iniの中身
+[settings]
 # botのトークン
-BOT_TOKEN = "*************************************"
+BOT_TOKEN = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # サーバーID(int型)
-SERVER_ID = 000000000000
+SERVER_ID = 00000000000000000000000
 # 通知させるチャンネルのID
-ALERT_CHANNEL = 00000000000
-# 通話参加時のみ付与させるロールのID
-ROLE_ID = 00000000
-# 通知を除外させたいメンバーID(Rhythmとか)
-EXCLUDE_ID = 000000000
+ALERT_CHANNEL = 00000000000000000000000
+"""
+
+# botのトークン
+BOT_TOKEN = str(config.get('settings', 'BOT_TOKEN'))
+# サーバーID(int型)
+SERVER_ID = int(config.get('settings', 'SERVER_ID'))
+# 通知させるチャンネルのID
+ALERT_CHANNEL = int(config.get('settings', 'ALERT_CHANNEL'))
 
 client = discord.Client()
 
