@@ -2,8 +2,8 @@
 
 ## 事前準備
 - ライブラリのインストール
->pip install pings
->pip install discord
+>pip install pings  
+>pip install discord  
 >pip install ConfigParser
 
 - config.iniを準備
